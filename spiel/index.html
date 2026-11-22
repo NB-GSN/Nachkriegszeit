@@ -155,6 +155,92 @@ table.log th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text
 .ok{color:var(--ok)}
 .note{font-size:.9rem;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+
+/* ---------- Gestaltung 2: Embleme, Banner, Dossier ---------- */
+:root{--west-deep:#183f78;--ost-deep:#8a2122;--gold:#f2c14e;--on-deep:#ffffff;--deep-ink:#161b21}
+.ico{width:1em;height:1em;fill:currentColor;flex:none;vertical-align:-.12em}
+.ico.star-disc{background:var(--west-deep);color:#fff;border-radius:50%;padding:.14em}
+.ico.hs-disc{background:var(--ost-deep);color:var(--gold);border-radius:50%;padding:.16em}
+
+.poster{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"w o" "t t";border-radius:8px;overflow:hidden;box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
+.poster .half{position:relative;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;padding:22px;color:var(--on-deep);overflow:hidden}
+.poster .half.w{grid-area:w;background:radial-gradient(120% 90% at 30% 30%,#2558a0,var(--west-deep))}
+.poster .half.o{grid-area:o;background:radial-gradient(120% 90% at 70% 30%,#b0302f,var(--ost-deep));align-items:flex-end;text-align:right}
+.poster .half .big{width:clamp(110px,22vw,190px);height:auto;aspect-ratio:1}
+.poster .half.w .big{color:#fff;align-self:center}
+.poster .half.o .big{color:var(--gold);align-self:center}
+.poster .half .tag{font-family:var(--f-mono);font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.poster .half .ghost{position:absolute;width:150%;height:auto;aspect-ratio:1;opacity:.07;pointer-events:none}
+.poster .half.w .ghost{left:-60%;bottom:-70%;color:#fff}
+.poster .half.o .ghost{right:-60%;bottom:-70%;color:var(--gold)}
+.poster .seam{grid-area:w;justify-self:end;width:6px;background:var(--deep-ink);margin-right:-3px;z-index:1}
+.poster .title{grid-area:t;background:var(--deep-ink);color:var(--on-deep);padding:22px clamp(18px,4vw,32px) 26px;display:flex;flex-direction:column;gap:10px}
+.poster .title .mono{color:#aeb8c1}
+.poster .title h1{color:#fff;font-size:clamp(2.3rem,7vw,4rem)}
+.poster .title .years{display:flex;align-items:center;gap:12px;font-family:var(--f-mono);font-size:.9rem;color:#d6dde3;letter-spacing:.08em}
+.poster .title .years i{flex:1;height:3px;background:linear-gradient(90deg,#3b74c4,#c23b3a);border-radius:2px}
+.poster.small .half{min-height:120px;padding:16px}
+.poster.small .half .big{width:72px}
+.poster.small .title h1{font-size:clamp(1.8rem,5vw,2.6rem)}
+
+.mode .opt{align-content:start}
+.mode .opt{grid-template-columns:1fr}
+.mode .opt .k{display:flex;gap:6px;align-items:center;width:auto;grid-row:auto}
+.mode .opt .k .ico{font-size:2.2rem}
+
+.dossier{background:var(--deep-ink);color:var(--on-deep);border-radius:8px 8px 0 0;padding:18px clamp(18px,4vw,32px);display:grid;grid-template-columns:auto 1fr;gap:4px 20px;align-items:center;position:relative;overflow:hidden}
+.dossier .rnum{grid-row:span 2;font-family:var(--f-display);font-stretch:75%;font-weight:800;font-size:clamp(3.6rem,10vw,5.4rem);line-height:.85;color:var(--gold)}
+.dossier .meta{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:#aeb8c1;display:flex;flex-wrap:wrap;gap:4px 14px}
+.dossier .meta b{color:#fff;font-weight:600}
+.dossier h2{color:#fff}
+.dossier .stampx{position:absolute;right:18px;top:14px;font-family:var(--f-mono);font-size:.7rem;font-weight:600;letter-spacing:.14em;color:#e5726f;border:1.5px solid #e5726f;padding:3px 8px;border-radius:2px;transform:rotate(4deg);opacity:.85}
+@media (max-width:520px){.dossier .stampx{display:none}}
+.dossier + .sheet{border-radius:0 0 8px 8px;border-top:0}
+.flagline{height:5px;background:linear-gradient(90deg,var(--west-deep) 0 50%,var(--ost-deep) 50% 100%)}
+
+blockquote{position:relative}
+blockquote cite{display:flex;align-items:center;gap:8px}
+blockquote cite .ico{font-size:1.15rem}
+
+.banner{position:relative;overflow:hidden;border-radius:8px;padding:clamp(20px,4vw,32px);color:var(--on-deep);display:flex;flex-direction:column;gap:10px;min-height:170px}
+.banner.w{background:linear-gradient(135deg,#2558a0,var(--west-deep) 70%)}
+.banner.o{background:linear-gradient(135deg,#b0302f,var(--ost-deep) 70%)}
+.banner .wm{position:absolute;right:-30px;bottom:-40px;width:230px;height:230px;opacity:.16;pointer-events:none}
+.banner.w .wm{color:#fff} .banner.o .wm{color:var(--gold);opacity:.22}
+.banner h2{color:#fff;max-width:22ch;position:relative}
+.banner .actor{font-size:.95rem;color:rgba(255,255,255,.82);position:relative}
+.banner .sidetag{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;position:relative}
+.banner.o .sidetag .ico{color:var(--gold)}
+.banner .sidetag .ico{font-size:1.3rem}
+
+.opt{background:var(--sheet);border-radius:6px;padding:18px;transition:border-color .15s,transform .15s}
+.opt:active{transform:scale(.99)}
+.opts .opt .k{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem;background:var(--paper);border:1.5px solid var(--line)}
+.w-side .opt.sel .k{background:var(--west-deep);border-color:var(--west-deep);color:#fff}
+.o-side .opt.sel .k{background:var(--ost-deep);border-color:var(--ost-deep);color:var(--gold)}
+.w-side .opt.sel{background:var(--west-soft)} .o-side .opt.sel{background:var(--ost-soft)}
+.btn.w{background:var(--west-deep);border-color:var(--west-deep);color:#fff}
+.btn.o{background:var(--ost-deep);border-color:var(--ost-deep);color:#fff}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:6px}
+.btn .ico{font-size:1.2rem}
+
+.handover{border-radius:8px;color:#fff;background:radial-gradient(90% 80% at 50% 30%,#b0302f,var(--ost-deep));border:0;position:relative;overflow:hidden}
+.handover .big{width:150px;height:150px;color:var(--gold)}
+.handover h2{color:#fff}
+.handover .note{color:rgba(255,255,255,.85)}
+.handover .side{background:rgba(255,255,255,.15);color:#fff}
+.handover .btn{background:var(--gold);border-color:var(--gold);color:var(--deep-ink)}
+
+.card{padding:0;overflow:hidden;background:var(--sheet);border-radius:8px}
+.card.w,.card.o{border-top:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px;color:#fff;font-family:var(--f-mono);font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.card.w .card-h{background:var(--west-deep)} .card.o .card-h{background:var(--ost-deep)}
+.card-h span{display:flex;align-items:center;gap:8px}
+.card-h .ico{font-size:1.3rem}
+.card.o .card-h .ico{color:var(--gold)}
+.card-b{padding:18px;display:flex;flex-direction:column;gap:12px}
+
+.endhead .title{gap:6px}
 </style>
 </head>
 <body>
@@ -167,6 +253,10 @@ table.log th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text
   </div>
 </header>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-star" viewBox="0 0 100 100"><polygon points="50,8 59.9,38.1 91.6,38.1 66,56.9 75.7,87 50,68.4 24.3,87 34,56.9 8.4,38.1 40.1,38.1"/></symbol>
+  <symbol id="i-hs" viewBox="0 0 100 100"><path d="M60.5 13.5 C78 17 90 33 87.5 52 C85 72 66 86 46 84.5 L38 91 L31 84 L37.5 77.5 C33 74 30.5 70 29 66 C40 74 56 74.5 67.5 65 C79 55 80.5 37 70 24 C67.5 20.5 64 17 60.5 13.5 Z"/><path d="M17 29 L29 17 L39 27 L36 30 L82.5 76.5 L76.5 82.5 L30 36 L27 39 Z"/></symbol>
+</svg>
 <main class="wrap" id="app"></main>
 
 <script>
@@ -458,9 +548,8 @@ function go(phase){S.phase=phase;save();render();window.scrollTo({top:0,behavior
 /* ---------- Ansichten ---------- */
 function vStart(){
   return `<div class="stack-l">
+  ${poster(false)}
   <section class="hero stack">
-    <p class="mono">Q2 LK Geschichte · EVA · Die doppelte Staatsgründung 1949</p>
-    <h1>Vom Verbündeten zum Gegner</h1>
     <p class="lage">1945 haben die USA, Großbritannien und die Sowjetunion Hitler gemeinsam besiegt. Vier Jahre später gibt es zwei deutsche Staaten, zwei Wirtschaftsordnungen und zwei Blöcke. In sieben Runden treffen Sie die Entscheidungen, vor denen Washington und Moskau standen, und erleben, wie jede Entscheidung auf der anderen Seite ankam.</p>
   </section>
   <section class="auftrag">
@@ -477,9 +566,9 @@ function vStart(){
     <input type="text" id="names" placeholder="z. B. Lena und Tarik" value="${esc(S.names)}">
     <p class="mono" style="margin-top:8px">Spielmodus</p>
     <div class="mode">
-      <button class="opt" id="m-pair"><span class="k">2</span><strong>Zu zweit</strong><small>USA gegen UdSSR. Beide wählen verdeckt, dann wird aufgedeckt.</small></button>
-      <button class="opt" id="m-w"><span class="k">1</span><strong>Allein als USA</strong><small>Moskau entscheidet so, wie es historisch geschah.</small></button>
-      <button class="opt" id="m-o"><span class="k">1</span><strong>Allein als UdSSR</strong><small>Washington entscheidet so, wie es historisch geschah.</small></button>
+      <button class="opt" id="m-pair"><span class="k">${ico("w","star-disc")}${ico("o","hs-disc")}</span><strong>Zu zweit</strong><small>USA gegen UdSSR. Beide wählen verdeckt, dann wird aufgedeckt.</small></button>
+      <button class="opt" id="m-w"><span class="k">${ico("w","star-disc")}</span><strong>Allein als USA</strong><small>Moskau entscheidet so, wie es historisch geschah.</small></button>
+      <button class="opt" id="m-o"><span class="k">${ico("o","hs-disc")}</span><strong>Allein als UdSSR</strong><small>Washington entscheidet so, wie es historisch geschah.</small></button>
       <div class="note" style="align-self:center">Die Leisten oben zeigen, wie Misstrauen und wirtschaftliche Einheit sich entwickeln. Der gelbe Strich markiert den historischen Wert.</div>
     </div>
   </section>
@@ -495,17 +584,29 @@ function vStart(){
   </div>`;
 }
 
-function quoteHTML(q){return `<blockquote class="${q.s}"><p>„${esc(q.t)}“</p><cite>${esc(q.c)}</cite></blockquote>`;}
+function ico(s,cls=""){return `<svg class="ico ${cls}" aria-hidden="true"><use href="#i-${s==="w"?"star":"hs"}"/></svg>`;}
+function poster(small,label){
+  return `<section class="poster ${small?"small":""}" aria-label="Vom Verbündeten zum Gegner">
+    <div class="half w"><span class="tag">USA · Westen</span>${ico("w","big")}${ico("w","ghost")}</div>
+    <div class="half o"><span class="tag">UdSSR · Osten</span>${ico("o","big")}${ico("o","ghost")}</div>
+    <div class="title"><p class="mono">${label||"Q2 LK Geschichte · EVA · Die doppelte Staatsgründung 1949"}</p><h1>Vom Verbündeten zum Gegner</h1><div class="years"><span>1945</span><i></i><span>1949</span></div></div>
+  </section>`;
+}
+function quoteHTML(q){return `<blockquote class="${q.s}"><p>„${esc(q.t)}“</p><cite>${q.s?ico(q.s,q.s==="w"?"star-disc":"hs-disc"):""}${esc(q.c)}</cite></blockquote>`;}
 
 function vBrief(){
   const R=ROUNDS[S.r];
-  return `<div class="stack-l"><article class="sheet stack">
-    <div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span>${esc(R.place)}</span><span><b>${esc(R.date)}</b></span></div>
-    <h2>${esc(R.title)}</h2>
+  return `<div class="stack-l"><div><header class="dossier">
+      <div class="rnum">${S.r+1}</div>
+      <div class="meta"><span>Runde <b>${S.r+1} von ${ROUNDS.length}</b></span><span>${esc(R.place)}</span><span><b>${esc(R.date)}</b></span></div>
+      <h2>${esc(R.title)}</h2>
+      <span class="stampx">Lagebericht</span>
+    </header><div class="flagline"></div>
+    <article class="sheet stack">
     <p class="lage">${esc(R.lage)}</p>
     ${R.quotes.map(quoteHTML).join("")}
     <dl class="track"><dt>Wirtschaft</dt><dd>${esc(R.wirt)}</dd><dt>Ideologie</dt><dd>${esc(R.ideo)}</dd></dl>
-  </article>
+  </article></div>
   ${R.sort?vSort():""}
   <div class="row"><button class="btn" id="toChoose">Entscheidungen treffen</button></div></div>`;
 }
@@ -524,19 +625,22 @@ function vSort(){
 function vChoose(side){
   const R=ROUNDS[S.r], D=R[side], cur=S.ch[S.r][side];
   const pair=S.mode==="pair";
-  return `<div class="stack-l"><article class="sheet stack ${side}-side">
-    <div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span><b>${esc(R.date)}</b></span><span>${pair?"Verdeckte Wahl":"Ihre Wahl"}</span></div>
-    <div class="who"><span class="side ${side}">${sideName[side]}</span><span class="note">${esc(D.actor)}</span></div>
-    <h2>${esc(D.q)}</h2>
+  return `<div class="stack-l"><div class="stack ${side}-side">
+    <header class="banner ${side}">${ico(side,"wm")}
+      <span class="sidetag">${ico(side)}${sideName[side]} · Runde ${S.r+1} · ${esc(R.date)}${pair?" · verdeckte Wahl":""}</span>
+      <h2>${esc(D.q)}</h2>
+      <p class="actor">${esc(D.actor)}</p>
+    </header>
     <div class="opts" role="radiogroup" aria-label="${esc(D.q)}">${D.o.map((o,i)=>`
       <button class="opt ${cur===i?"sel":""}" role="radio" aria-checked="${cur===i}" data-pick="${i}"><span class="k">${L[i]}</span><strong>${esc(o.t)}</strong><small>${esc(o.d)}</small></button>`).join("")}</div>
-  </article>
-  <div class="row"><button class="btn ${side}" id="confirm" ${cur==null?"disabled":""}>Entscheidung festlegen</button><button class="link" id="backBrief">Zurück zur Lage</button></div></div>`;
+  </div>
+  <div class="row"><button class="btn ${side}" id="confirm" ${cur==null?"disabled":""}>${ico(side)}Entscheidung festlegen</button><button class="link" id="backBrief">Zurück zur Lage</button></div></div>`;
 }
 
 function vHand(){
   return `<div class="sheet handover">
-    <span class="side w">USA hat entschieden</span>
+    ${ico("o","big")}
+    <span class="side">Washington hat entschieden</span>
     <h2>Tablet an die UdSSR übergeben</h2>
     <p class="note">Die Wahl Washingtons bleibt verdeckt, bis beide entschieden haben.</p>
     <button class="btn o" id="toO">Ich spiele die UdSSR, weiter</button>
@@ -549,21 +653,27 @@ function sideCard(side){
   const h=D.o.findIndex(x=>x.hist);
   const yours=S.mode==="pair"||S.side===side;
   return `<div class="card ${side}">
-    <div class="who"><span class="side ${side}">${sideName[side]}</span>${o.hist?`<span class="stamp h">historisch</span>`:`<span class="stamp n">alternativ</span>`}</div>
+    <div class="card-h"><span>${ico(side)}${sideName[side]}</span></div>
+    <div class="card-b">
+    <div>${o.hist?`<span class="stamp h">historisch</span>`:`<span class="stamp n">alternativ</span>`}</div>
     <h3>${L[i]}: ${esc(o.t)}</h3>
     ${yours?"":`<p class="note">Diese Seite handelt wie historisch.</p>`}
     <div class="lens"><span class="mono">So las ${other} das</span>„${esc(o.lens)}“</div>
     <p class="check"><span class="mono">${o.hist?"Warum so":"Realitätscheck"}</span><br>${esc(o.why)}</p>
     ${o.hist?"":`<div class="histbox"><span class="mono">Tatsächlich</span><br><strong>${esc(D.o[h].t)}.</strong> ${esc(D.o[h].why)}</div>`}
     <p class="delta">Misstrauen ${o.m>=0?"+":""}${o.m} · Wirtschaftseinheit ${o.e>=0?"+":""}${o.e}</p>
-  </div>`;
+  </div></div>`;
 }
 
 function vReveal(){
   const R=ROUNDS[S.r]; const last=S.r===ROUNDS.length-1;
   return `<div class="stack-l">
-    <div class="stack"><div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span>Auflösung</span><span><b>${esc(R.date)}</b></span></div>
-    <h2>${esc(R.title)}</h2></div>
+    <div><header class="dossier" style="border-radius:8px 8px 0 0">
+      <div class="rnum">${S.r+1}</div>
+      <div class="meta"><span>Auflösung</span><span><b>${esc(R.date)}</b></span></div>
+      <h2>${esc(R.title)}</h2>
+      <span class="stampx">Aufgedeckt</span>
+    </header><div class="flagline" style="border-radius:0 0 8px 8px"></div></div>
     <div class="reveal">${sideCard("w")}${sideCard("o")}</div>
     <div class="histbox"><span class="mono">Ergebnis der Geschichte</span><br>${esc(R.hist)}</div>
     <section class="sheet stack">
@@ -600,7 +710,8 @@ function verdict(){
 function vEnd(){
   const v=verdict();
   return `<div class="stack-l">
-  <section class="stack"><p class="mono">Auswertung</p><h2>Wie aus Verbündeten Gegner wurden</h2>
+  ${poster(true,"Auswertung · "+esc(S.names||"Ihr Spiel"))}
+  <section class="stack"><h2>Wie aus Verbündeten Gegner wurden</h2>
     <p class="lage">Misstrauen am Ende: <b>${v.m}</b> von 100 · Wirtschaftseinheit: <b>${v.e}</b> von 100 · alternative Entscheidungen: <b>${v.alt}</b></p>
     <p class="lage">${esc(v.t)}</p></section>
   <section class="sheet stack">${chart()}</section>
