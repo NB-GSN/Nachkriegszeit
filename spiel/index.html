@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vom Verbündeten zum Gegner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: eine Akte, die man Runde für Runde durchblättert. Kopfleiste mit zwei Messinstrumenten, darunter das jeweilige Dossier. */
+:root{
+  --paper:#e9ece8; --sheet:#f7f8f5; --ink:#1b2128; --muted:#5b6670; --line:#c9cfcb;
+  --west:#1d4f8f; --west-soft:#dbe5f2; --ost:#9e2a2b; --ost-soft:#f2dcdb;
+  --hist:#6b5a14; --hist-soft:#efe8c8; --ok:#2f6b3a; --ok-soft:#d8eadb;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#12161a; --sheet:#1b2026; --ink:#e3e7ea; --muted:#9aa5ae; --line:#323a42;
+  --west:#86aee6; --west-soft:#1c2c42; --ost:#e58a86; --ost-soft:#3a2223;
+  --hist:#d9c46a; --hist-soft:#332e17; --ok:#86c693; --ok-soft:#1c3121; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#12161a; --sheet:#1b2026; --ink:#e3e7ea; --muted:#9aa5ae; --line:#323a42;
+  --west:#86aee6; --west-soft:#1c2c42; --ost:#e58a86; --ost-soft:#3a2223;
+  --hist:#d9c46a; --hist-soft:#332e17; --ok:#86c693; --ok-soft:#1c3121; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:880px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);font-stretch:80%;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,6vw,3.4rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.6rem,4.2vw,2.3rem);font-weight:750}
+h3{font-size:1.2rem;font-weight:700}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-l{display:flex;flex-direction:column;gap:28px}
+
+/* Kopfleiste */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding-block:10px;margin-bottom:24px}
+.top-in{max-width:880px;margin:0 auto;display:grid;grid-template-columns:auto 1fr 1fr;gap:10px 22px;align-items:center}
+.steps{display:flex;gap:5px}
+.steps i{width:22px;height:6px;border-radius:2px;background:var(--line)}
+.steps i.done{background:var(--muted)}
+.steps i.now{background:var(--ink)}
+.meter{min-width:0}
+.meter .lbl{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.meter .lbl b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{height:9px;background:var(--sheet);border:1px solid var(--line);border-radius:2px;position:relative;overflow:hidden}
+.bar span{position:absolute;inset:0 auto 0 0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.bar.m span{background:linear-gradient(90deg,var(--muted),var(--ost))}
+.bar.e span{background:var(--west)}
+.bar .h{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--hist)}
+@media (max-width:620px){.top-in{grid-template-columns:1fr 1fr}.steps{grid-column:1/-1}}
+
+/* Blätter */
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:clamp(18px,4vw,32px)}
+.cable{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px dashed var(--line);padding-bottom:10px}
+.cable b{color:var(--ink);font-weight:600}
+.lage{max-width:68ch}
+blockquote{margin:0;padding:12px 0 12px 18px;border-left:3px solid var(--line);max-width:66ch}
+blockquote p{font-style:italic}
+blockquote cite{display:block;font-style:normal;font-size:.85rem;color:var(--muted);margin-top:6px}
+blockquote.w{border-color:var(--west)} blockquote.o{border-color:var(--ost)}
+.track{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.95rem;max-width:70ch}
+.track dt{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.track dd{margin:0}
+
+/* Seiten */
+.side{border-radius:4px;padding:3px 9px;font-family:var(--f-mono);font-size:.74rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:inline-block}
+.side.w{background:var(--west-soft);color:var(--west)} .side.o{background:var(--ost-soft);color:var(--ost)}
+.who{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+
+/* Optionen */
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;text-align:left;width:100%;background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:4px;padding:16px;font:inherit;cursor:pointer;min-height:64px}
+.opt:hover{border-color:var(--muted)}
+.opt:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--west);outline-offset:2px}
+.opt .k{grid-row:span 2;font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1;color:var(--muted);width:1.2em}
+.opt strong{font-weight:600}
+.opt small{font-size:.92rem;color:var(--muted)}
+.opt.sel{border-color:var(--ink);background:var(--sheet);box-shadow:inset 0 0 0 1px var(--ink)}
+.opt.sel .k{color:var(--ink)}
+.w-side .opt.sel{border-color:var(--west);box-shadow:inset 0 0 0 1px var(--west)} .w-side .opt.sel .k{color:var(--west)}
+.o-side .opt.sel{border-color:var(--ost);box-shadow:inset 0 0 0 1px var(--ost)} .o-side .opt.sel .k{color:var(--ost)}
+
+/* Knöpfe */
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{font:600 1rem var(--f-body);border-radius:4px;padding:13px 20px;border:1.5px solid var(--ink);background:var(--ink);color:var(--sheet);cursor:pointer;min-height:48px}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.w{background:var(--west);border-color:var(--west);color:var(--sheet)}
+.btn.o{background:var(--ost);border-color:var(--ost);color:var(--sheet)}
+.link{background:none;border:0;padding:0;font:inherit;color:var(--muted);text-decoration:underline;cursor:pointer}
+
+/* Auflösung */
+.reveal{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.reveal{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0;background:var(--paper)}
+.card.w{border-top:4px solid var(--west)} .card.o{border-top:4px solid var(--ost)}
+.lens{font-size:.95rem;padding:10px 12px;border-radius:3px}
+.card.w .lens{background:var(--ost-soft)} .card.o .lens{background:var(--west-soft)}
+.lens .mono{display:block;margin-bottom:3px}
+.stamp{display:inline-block;font-family:var(--f-mono);font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border:1.5px solid currentColor;border-radius:2px;transform:rotate(-2deg)}
+.stamp.h{color:var(--hist)} .stamp.n{color:var(--muted)}
+.check{font-size:.95rem}
+.histbox{background:var(--hist-soft);border-radius:3px;padding:10px 12px;font-size:.95rem}
+.delta{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+
+textarea,input[type=text]{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:4px;padding:12px}
+textarea{min-height:110px;resize:vertical}
+label.q{font-weight:600;display:block;margin-bottom:6px}
+
+/* Sortierübung */
+.sort{display:flex;flex-direction:column;gap:8px}
+.si{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+.si .b{display:flex;gap:6px}
+.si button{font:600 .85rem var(--f-body);padding:8px 12px;border-radius:3px;border:1.5px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer;min-height:40px}
+.si.right{border-color:var(--ok);background:var(--ok-soft)}
+.si.wrong{border-color:var(--ost);background:var(--ost-soft)}
+.si .fb{grid-column:1/-1;font-size:.88rem}
+@media (max-width:520px){.si{grid-template-columns:1fr}}
+
+/* Start */
+.hero{padding-block:8px 4px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.mode{grid-template-columns:1fr}}
+.auftrag{border-left:4px solid var(--ink);padding:4px 0 4px 16px;max-width:70ch}
+.auftrag ol{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+details{border:1px solid var(--line);border-radius:4px;padding:12px 16px;background:var(--paper)}
+details summary{cursor:pointer;font-weight:600}
+details .stack{margin-top:12px;font-size:.95rem}
+
+/* Übergabe */
+.handover{text-align:center;padding-block:60px;display:flex;flex-direction:column;align-items:center;gap:18px}
+
+/* Ende */
+.chartbox{overflow-x:auto}
+.chartbox svg{width:100%;min-width:340px;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.88rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--c)}
+.pos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:700px){.pos{grid-template-columns:1fr}}
+.pos button{text-align:left;font:inherit;font-size:.93rem;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:4px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.pos button.sel{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.pos b{font-family:var(--f-display);font-stretch:80%;font-size:1.15rem}
+table.log{border-collapse:collapse;width:100%;font-size:.9rem}
+table.log td,table.log th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.log th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:400}
+.tbl{overflow-x:auto}
+.ok{color:var(--ok)}
+.note{font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="top" aria-label="Spielstand">
+  <div class="top-in">
+    <div class="steps" id="steps" aria-hidden="true"></div>
+    <div class="meter"><div class="lbl"><span>Misstrauen Ost–West</span><b id="mv">25</b></div><div class="bar m" id="mbar"><span style="width:25%"></span><i class="h" hidden></i></div></div>
+    <div class="meter"><div class="lbl"><span>Wirtschaftseinheit Dtl.</span><b id="ev">100</b></div><div class="bar e" id="ebar"><span style="width:100%"></span><i class="h" hidden></i></div></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<script>
+/* ---------- Inhalte ---------- */
+const ROUNDS = [
+{
+  date:"17.07.–02.08.1945", place:"Potsdam, Schloss Cecilienhof", title:"Die Reparationsfrage",
+  lage:"Deutschland hat bedingungslos kapituliert. In Jalta hatte Stalin 20 Milliarden Dollar Reparationen gefordert, die Hälfte für die Sowjetunion; Roosevelt hatte die Summe nur als Verhandlungsgrundlage akzeptiert. Die UdSSR beklagt rund 27 Millionen Tote, ihr Westen ist verwüstet. Die USA fürchten, am Ende mit eigenen Hilfslieferungen an die Deutschen die Reparationen an Moskau zu bezahlen.",
+  quotes:[{t:"Während der Besatzungszeit ist Deutschland als eine wirtschaftliche Einheit zu betrachten.",c:"Potsdamer Abkommen, 2. August 1945",s:""}],
+  wirt:"Reparationen gegen Wiederaufbau: Wer entnimmt was, aus welcher Zone?",
+  ideo:"Noch gilt die gemeinsame Formel der „Vier D“. Doch jede Seite versteht unter Demokratisierung etwas anderes.",
+  prompt:"Erklären Sie, warum die Reparationsregelung den Grundsatz der „wirtschaftlichen Einheit“ untergrub.",
+  w:{actor:"Präsident Truman / Außenminister Byrnes", q:"Wie regeln Sie die Reparationen?", o:[
+    {t:"Feste Gesamtsumme aus ganz Deutschland",d:"Sie akzeptieren 20 Mrd. Dollar, die Hälfte für die UdSSR, entnommen aus allen Zonen einschließlich des Ruhrgebiets.",m:-5,e:5,
+     lens:"Endlich wird das Opfer der Sowjetvölker anerkannt. Die Amerikaner halten Wort.",
+     why:"Washington fürchtete, die Reparationen indirekt zu finanzieren: Was Moskau aus den Westzonen abzieht, hätten die USA mit Lebensmitteln ausgleichen müssen. Die Erfahrung mit Reparationen und US-Krediten nach 1918 wirkte nach. Außerdem wollte man der UdSSR keinen Zugriff auf die Ruhr geben."},
+    {t:"Jede Macht bedient sich aus ihrer Zone",d:"Reparationen nur aus der eigenen Zone. Die UdSSR erhält zusätzlich einen Anteil an Industrieanlagen aus den Westzonen, teils im Tausch gegen Lebensmittel aus der SBZ.",m:4,e:-10,hist:true,
+     lens:"Die Amerikaner schützen das Ruhrgebiet für ihr Kapital. Wir bekommen einen Bruchteil dessen, was uns nach diesem Krieg zusteht.",
+     why:"So wurde es in Potsdam beschlossen, als Paket mit der vorläufigen Oder-Neiße-Grenze. Der Streit war vertagt, aber Deutschland wirtschaftlich in Zonen zerlegt, im Widerspruch zur gleichzeitig beschlossenen Wirtschaftseinheit."},
+    {t:"Keine Reparationen, Wiederaufbau zuerst",d:"Deutschland soll zuerst wieder auf die Beine kommen; Reparationen werden gestrichen.",m:12,e:0,
+     lens:"Die Amerikaner schonen Deutschland. Als künftigen Verbündeten gegen uns?",
+     why:"1945 politisch undenkbar: Die Öffentlichkeit in den USA und Europa verlangte Bestrafung, und die Direktive JCS 1067 untersagte ausdrücklich, die deutsche Wirtschaft bevorzugt aufzubauen."}
+  ]},
+  o:{actor:"Stalin / Außenminister Molotow", q:"Wie gehen Sie in die Reparationsverhandlung?", o:[
+    {t:"Auf 10 Mrd. Dollar und Ruhrkontrolle bestehen",d:"Keine Zugeständnisse: Die UdSSR erhält ihren vollen Anteil aus ganz Deutschland und Mitsprache über die Ruhrindustrie.",m:8,e:-4,
+     lens:"Moskau will die deutsche Wirtschaft ausbluten lassen und über die Ruhr nach Westeuropa greifen.",
+     why:"Stalin brauchte eine Einigung, vor allem die Oder-Neiße-Linie als Westgrenze Polens. Mit maximaler Härte riskierte er, beides zu verlieren, denn Byrnes verknüpfte beide Fragen zu einem Paket."},
+    {t:"Zonenlösung annehmen, Zusatzanteile aus dem Westen",d:"Sie entnehmen Reparationen aus der SBZ und erhalten einen Teil der Industrieanlagen aus den Westzonen.",m:4,e:-8,hist:true,
+     lens:"Moskau akzeptiert, aber in der SBZ werden ganze Fabriken abgebaut und abtransportiert. Was dort geschieht, entzieht sich jeder Kontrolle.",
+     why:"So geschah es. Im Gegenzug wurden die Gebiete östlich von Oder und Neiße vorläufig unter polnische Verwaltung gestellt. In der SBZ begann eine massive Demontage."},
+    {t:"Forderungen senken, gemeinsame Zentralverwaltung",d:"Sie verzichten auf einen Teil der Reparationen, wenn dafür deutsche Zentralverwaltungen unter Vier-Mächte-Kontrolle entstehen.",m:-8,e:10,
+     lens:"Ein überraschendes Signal: Moskau will offenbar kooperieren.",
+     why:"Für Stalin kaum denkbar: Die UdSSR hatte die größten Kriegsschäden, Reparationen waren für ihren Wiederaufbau zentral. Eine gemeinsame Verwaltung hätte zudem westlichen Einfluss in der SBZ bedeutet."}
+  ]},
+  hist:"Kompromiss der „Zonenreparationen“: keine Gesamtsumme, Wirtschaftseinheit nur auf dem Papier."
+},
+{
+  date:"1945/46", place:"Die Besatzungszonen", title:"Die eigene Zone gestalten",
+  lage:"Der Alliierte Kontrollrat muss einstimmig entscheiden und kommt kaum voran; Frankreich blockiert gemeinsame deutsche Zentralverwaltungen. In ihren Zonen handeln die Besatzungsmächte allein. Jede Entscheidung über Eigentum, Parteien und Verwaltung schafft Tatsachen.",
+  quotes:[
+    {t:"Dieser Krieg ist nicht wie in der Vergangenheit: Wer ein Gebiet besetzt, legt ihm auch sein eigenes gesellschaftliches System auf.",c:"Stalin zu Milovan Djilas, April 1945",s:"o"},
+    {t:"Es muss demokratisch aussehen, aber wir müssen alles in der Hand haben.",c:"Walter Ulbricht 1945, überliefert von Wolfgang Leonhard",s:"o"}],
+  wirt:"Eigentum an Boden und Fabriken: privat oder „volkseigen“?",
+  ideo:"Für Moskau sind Junker und Großkonzerne die Wurzeln des Faschismus. Für Washington sind Privateigentum und Freiheit untrennbar.",
+  prompt:"Erläutern Sie, warum beide Seiten ihre Eingriffe als Entnazifizierung und Demokratisierung verstehen konnten, die jeweils andere Seite aber nicht.",
+  w:{actor:"Militärgouverneur Lucius D. Clay", q:"Welche Linie verfolgen Sie in der US-Zone?", o:[
+    {t:"Die Deutschen entscheiden lassen, auch über Sozialisierung",d:"Wenn deutsche Landtage oder Volksabstimmungen die Verstaatlichung von Schlüsselindustrien beschließen, akzeptieren Sie das.",m:-5,e:4,
+     lens:"Auch im Westen wählen die Deutschen den Sozialismus. Die Arbeiterklasse setzt sich durch.",
+     why:"In Hessen stimmten im Dezember 1946 rund 72 % für den Sozialisierungsartikel 41 der Landesverfassung. Clay setzte ihn aus: Über die Wirtschaftsordnung solle erst eine gesamtdeutsche Regierung entscheiden. Faktisch schützte er das Privateigentum als Grundlage von Freiheit und Wiederaufbau."},
+    {t:"Privateigentum sichern, Demokratie von unten",d:"Länder, Parteien und Kommunalwahlen werden aufgebaut; Sozialisierungen werden aufgeschoben.",m:4,e:-8,hist:true,
+     lens:"Die Monopolkapitalisten, die Hitler finanziert haben, bleiben an der Macht.",
+     why:"So geschah es: Gemeinde- und Landtagswahlen 1946, Länderverfassungen, Aussetzung des hessischen Sozialisierungsartikels."},
+    {t:"Harte Kontrolle ohne Aufbau",d:"Die Industrie bleibt unter Militärverwaltung, die Wirtschaft wird kurzgehalten.",m:0,e:-4,
+     lens:"Gleichgültig, solange die Reparationen fließen.",
+     why:"So sah es JCS 1067 anfangs vor. Hunger, Flüchtlinge und die Kosten für den amerikanischen Steuerzahler machten diese Linie schnell unhaltbar."}
+  ]},
+  o:{actor:"Sowjetische Militäradministration (SMAD) und KPD-Führung", q:"Wie gestalten Sie die SBZ?", o:[
+    {t:"Bodenreform, Enteignungen, SED",d:"Großgrundbesitz über 100 ha wird entschädigungslos enteignet („Junkerland in Bauernhand“), Banken und Großindustrie werden verstaatlicht, KPD und SPD zur SED vereinigt.",m:9,e:-12,hist:true,
+     lens:"Sowjetisierung nach Plan. Die Zone wird nach dem Vorbild der UdSSR umgebaut: Das ist Expansion des Kommunismus.",
+     why:"So geschah es: Bodenreform ab September 1945, Volksentscheid in Sachsen über die Enteignung von „Kriegs- und Naziverbrechern“ (30. Juni 1946), SED-Gründung im April 1946. Begründet wurde alles antifaschistisch."},
+    {t:"Privatwirtschaft erhalten, Reformen im Kontrollrat abstimmen",d:"Keine einseitigen Strukturreformen; über Eigentumsfragen soll ganz Deutschland gemeinsam entscheiden.",m:-8,e:10,
+     lens:"Moskau hält sich an die gemeinsame Linie. Vielleicht ist Kooperation doch möglich.",
+     why:"Aus marxistisch-leninistischer Sicht hätte das die „Wurzeln des Faschismus“ stehen lassen. Zudem wollten die KPD-Kader um Ulbricht die Schlüsselstellungen sichern (siehe Zitat)."},
+    {t:"Nur demontieren, die Zone nicht umbauen",d:"Sie nehmen, was für den Wiederaufbau der UdSSR gebraucht wird, und überlassen die Politik sich selbst.",m:5,e:-8,
+     lens:"Die Sowjets plündern ihre Zone aus.",
+     why:"Demontiert wurde tatsächlich massiv. Aber Stalin wollte zugleich politischen Einfluss; reine Ausbeutung hätte die KPD bei den Deutschen völlig diskreditiert."}
+  ]},
+  hist:"Zwei Zonen, zwei Eigentumsordnungen: Bodenreform und Enteignung im Osten, Sicherung des Privateigentums im Westen."
+},
+{
+  date:"März–Dezember 1946", place:"Fulton · Paris · Stuttgart", title:"Scheitert die Wirtschaftseinheit?",
+  lage:"Die Westzonen hungern, besonders die britische mit dem Ruhrgebiet. USA und Großbritannien bezahlen die Lebensmittelimporte. Lieferungen aus der agrarischen SBZ bleiben aus, Reparationen fließen aber weiter nach Osten.",
+  quotes:[{t:"Von Stettin an der Ostsee bis Triest an der Adria ist ein Eiserner Vorhang über den Kontinent gezogen.",c:"Winston Churchill in Fulton (USA), 5. März 1946",s:"w"}],
+  wirt:"Wer bezahlt die Versorgung der Deutschen, und wohin fließen die Güter?",
+  ideo:"Im Westen gilt Not als Nährboden des Kommunismus. In Moskau gilt westlicher Wiederaufbau als Bündnis mit der deutschen Bourgeoisie.",
+  prompt:"Arbeiten Sie heraus, inwiefern die wirtschaftliche Not 1946 zum Motor der Teilung wurde.",
+  w:{actor:"Clay / Außenminister Byrnes", q:"Wie reagieren Sie auf die Versorgungskrise?", o:[
+    {t:"Reparationsstopp, Byrnes-Rede, Bizone",d:"Clay stoppt im Mai 1946 die Reparationslieferungen aus der US-Zone. Byrnes kündigt in Stuttgart den Wiederaufbau an und bietet den Zusammenschluss der Zonen an; nur die Briten nehmen an (Bizone ab 1.1.1947).",m:7,e:-12,hist:true,
+     lens:"Die Amerikaner brechen Potsdam und schmieden ein Bündnis mit dem deutschen Kapital.",
+     why:"So geschah es. Die Besatzung sollte billiger und Westdeutschland stabil werden, weil Hunger und Chaos als Nährboden des Kommunismus galten."},
+    {t:"Reparationen weiterliefern, Vier-Mächte-Lösung retten",d:"Sie halten sich an Potsdam, auch wenn die Gegenleistungen aus dem Osten ausbleiben.",m:-6,e:4,
+     lens:"Die Amerikaner halten sich an die Abmachungen.",
+     why:"Der US-Kongress und die britische Regierung wollten nicht die Deutschen ernähren, während Güter nach Osten flossen. Großbritannien stand selbst vor dem Bankrott."},
+    {t:"Druck auf Frankreich für Zentralverwaltungen",d:"Sie drängen Paris, die Blockade gemeinsamer deutscher Verwaltungen im Kontrollrat aufzugeben.",m:-4,e:8,
+     lens:"Ein Schritt zur Einheit, solange diese Verwaltungen nicht vom Westen gelenkt werden.",
+     why:"Frankreich fürchtete ein starkes Deutschland und wollte Saar und Ruhr. Die USA brauchten Frankreich als Partner in Westeuropa; Druck hätte das westliche Lager belastet."}
+  ]},
+  o:{actor:"Außenminister Molotow", q:"Wie verhalten Sie sich auf der Pariser Außenministerkonferenz?", o:[
+    {t:"Einheit anbieten, mit Bedingungen",d:"Sie bieten ein vereintes Deutschland unter Vier-Mächte-Kontrolle an, bestehen aber auf 10 Mrd. Dollar Reparationen und Mitkontrolle des Ruhrgebiets.",m:5,e:-4,hist:true,
+     lens:"Propaganda: Moskau spielt den Anwalt der deutschen Einheit und will in Wahrheit die Ruhr.",
+     why:"So geschah es am 10. Juli 1946. Für Moskau waren Reparationen und Ruhrkontrolle Sicherheitsfragen: Nie wieder sollte deutsche Schwerindustrie gegen die UdSSR rüsten."},
+    {t:"Lebensmittel aus der SBZ in den Westen liefern",d:"Sie erfüllen die Potsdamer Gegenleistung und schicken Agrargüter in die Westzonen.",m:-8,e:10,
+     lens:"Die Sowjets erfüllen ihre Zusagen. Das stärkt die Wirtschaftseinheit.",
+     why:"Die SBZ litt selbst unter Demontage und Mangel. Lieferungen hätten die eigene Bevölkerung belastet, deren Zustimmung die SED gerade brauchte."},
+    {t:"Kontrollrat blockieren",d:"Sie verweigern im Kontrollrat jede Einigung, bis der Westen nachgibt.",m:10,e:-10,
+     lens:"Moskau will keine Einigung. Die Vier-Mächte-Verwaltung ist tot.",
+     why:"Der Kontrollrat war Moskaus Hebel für Mitsprache im Westen, besonders an der Ruhr. Die UdSSR verließ ihn erst im März 1948."}
+  ]},
+  hist:"Der Westen geht eigene Wege (Bizone), Moskau verlangt Reparationen und Ruhrkontrolle. Die Wirtschaftseinheit zerbricht."
+},
+{
+  date:"März–Oktober 1947", place:"Washington · Paris · Szklarska Poręba", title:"Hilfe oder Eindämmung?",
+  lage:"Großbritannien kann Griechenland und die Türkei nicht mehr stützen. Der Hungerwinter 1946/47 trifft ganz Europa. Am 12. März 1947 spricht Truman vor dem Kongress; am 5. Juni kündigt Außenminister Marshall ein Hilfsprogramm für Europa an, zu dem auch die UdSSR und Osteuropa eingeladen sind.",
+  quotes:[
+    {t:"Ich glaube, es muss die Politik der Vereinigten Staaten sein, die freien Völker zu unterstützen, die sich der Unterwerfung durch bewaffnete Minderheiten oder durch äußeren Druck widersetzen.",c:"Harry S. Truman, 12. März 1947",s:"w"},
+    {t:"… zwei Lager: das imperialistische und antidemokratische Lager einerseits und das antiimperialistische und demokratische Lager andererseits.",c:"Andrej Shdanov auf der Gründung des Kominform, Oktober 1947",s:"o"}],
+  wirt:"Dollarkredite und Warenlieferungen: Wer nimmt sie an, und zu welchen Bedingungen?",
+  ideo:"Zwei Weltbilder spiegeln sich: Freiheit gegen Totalitarismus hier, Imperialismus gegen Demokratie dort.",
+  prompt:"Vergleichen Sie, wie Truman und Shdanov die Welt einteilen. Was ist gleich, was ist spiegelbildlich?",
+  w:{actor:"Präsident Truman / Außenminister Marshall", q:"Wie antworten Sie auf die Krise Europas?", o:[
+    {t:"Truman-Doktrin und Marshall-Plan",d:"Hilfe für alle „freien Völker“ und ein großes Aufbauprogramm (ERP). Wer teilnimmt, legt seine Wirtschaftsdaten offen und stimmt sich ab.",m:8,e:-8,hist:true,
+     lens:"Dollar-Imperialismus: Die USA wollen Europa wirtschaftlich unterwerfen und gegen uns einen.",
+     why:"So geschah es. Wirtschaftliche Stabilität sollte den Kommunismus eindämmen (Containment); zugleich brauchte die US-Wirtschaft funktionierende Absatzmärkte in Europa."},
+    {t:"Hilfe über die UNO, gemeinsam mit der UdSSR",d:"Die Hilfe läuft über eine UN-Organisation, in der Moskau mitentscheidet.",m:-6,e:5,
+     lens:"Hilfe ohne Hintergedanken: ein Zeichen der Partnerschaft.",
+     why:"Der Kongress hätte keine Milliarden bewilligt, über deren Verwendung Moskau mitbestimmt. Truman brauchte gerade die antikommunistische Begründung, um die Mittel zu bekommen."},
+    {t:"Rückzug aus Europa",d:"Die USA ziehen ihre Truppen ab und überlassen Europa sich selbst.",m:-6,e:0,
+     lens:"Die Amerikaner gehen. Der Weg für die Revolution in Europa ist frei.",
+     why:"Nach 1918 hatte der Rückzug der USA in den Isolationismus zum Scheitern der Friedensordnung beigetragen. Diesen Fehler wollte Washington nicht wiederholen."}
+  ]},
+  o:{actor:"Stalin / Molotow", q:"Wie reagieren Sie auf das Angebot Marshalls?", o:[
+    {t:"Ablehnen und Osteuropa die Teilnahme verbieten",d:"Molotow verlässt die Pariser Konferenz; Polen und die Tschechoslowakei müssen ihre Zusagen zurückziehen. Im Oktober entsteht das Kominform.",m:8,e:-8,hist:true,
+     lens:"Moskau hat entschieden: Europa ist geteilt.",
+     why:"So geschah es. Teilnahme hätte Offenlegung der Wirtschaftsdaten und westliche Mitsprache bedeutet und den Zugriff auf Osteuropa gefährdet."},
+    {t:"Teilnahme ohne Kontrolle verlangen",d:"Sie wollen Hilfe, aber jedes Land entscheidet allein über ihre Verwendung.",m:-4,e:4,
+     lens:"Ernsthaftes Interesse, oder der Versuch, das Programm von innen zu sabotieren?",
+     why:"Genau das forderte Molotow in Paris. Der Westen lehnte ab, daraufhin reiste er ab. Diese Option war also der erste Schritt zur Ablehnung."},
+    {t:"Voll teilnehmen, westliche Bedingungen annehmen",d:"Die UdSSR und Osteuropa nehmen am Marshall-Plan teil und legen ihre Daten offen.",m:-10,e:10,
+     lens:"Eine Sensation: Moskau öffnet sich.",
+     why:"Für Stalin unannehmbar: Abhängigkeit vom amerikanischen Kapital widersprach dem Selbstverständnis als sozialistische Gegenmacht und hätte Osteuropa dem sowjetischen Einfluss entzogen."}
+  ]},
+  hist:"Zwei-Lager-Welt: Truman-Doktrin und Marshall-Plan auf der einen, Ablehnung und Kominform auf der anderen Seite."
+},
+{
+  date:"Januar–Juni 1948", place:"Frankfurt am Main · Berlin-Karlshorst", title:"Markt oder Plan?",
+  lage:"Die Londoner Außenministerkonferenz ist im Dezember 1947 gescheitert. Die Reichsmark ist wertlos, auf dem Schwarzmarkt zahlt man mit Zigaretten. In Frankfurt bereitet Ludwig Erhard eine Wirtschaftsreform vor; in der SBZ erhält die Deutsche Wirtschaftskommission (DWK) zentrale Planungsbefugnisse.",
+  quotes:[],
+  sort:true,
+  wirt:"Eigentum, Preise, Produktion: Wer entscheidet, der Markt oder der Plan?",
+  ideo:"Die Wirtschaftsordnung ist für beide Seiten mehr als Technik. Sie ist der Kern ihres Gesellschaftsmodells.",
+  prompt:"Begründen Sie, warum die Wirtschaftsordnung 1948 für keine Seite verhandelbar war.",
+  w:{actor:"Westmächte und Frankfurter Wirtschaftsverwaltung (Erhard)", q:"Welche Wirtschaftsordnung setzen Sie durch?", o:[
+    {t:"Währungsreform und freie Preise",d:"Am 20. Juni 1948 kommt die D-Mark (Kopfgeld, Umtausch 10:1). Erhards Leitsätzegesetz hebt die meisten Preisbindungen auf.",m:6,e:-15,hist:true,
+     lens:"Der Weststaat wird vorbereitet. Die entwerteten Reichsmark aus dem Westen überschwemmen unsere Zone.",
+     why:"So geschah es. Ohne stabile Währung konnte der Marshall-Plan nicht wirken; auf eine Einigung mit Moskau wollte man nicht länger warten."},
+    {t:"Gemeinsame Währungsreform für alle vier Zonen",d:"Sie verhandeln weiter im Kontrollrat über eine Währung für ganz Deutschland.",m:-5,e:8,
+     lens:"Der Westen respektiert die Einheit Deutschlands.",
+     why:"Die Verhandlungen liefen seit 1946 ergebnislos. Ein Streitpunkt: Moskau verlangte eigene Druckplatten in Leipzig, Washington erinnerte sich an die ungedeckten Besatzungsmark, die die Sowjets 1945 gedruckt hatten."},
+    {t:"Neue Währung, aber Preise staatlich festlegen",d:"Die D-Mark kommt, Bewirtschaftung und Preiskontrollen bleiben bestehen.",m:3,e:-10,
+     lens:"Auch so spaltet der Westen Deutschland.",
+     why:"Das forderten SPD und Teile der CDU (Ahlener Programm 1947). Erhard setzte sich mit freien Preisen durch, ein Wagnis, das zunächst Preissteigerungen brachte."}
+  ]},
+  o:{actor:"SMAD und Deutsche Wirtschaftskommission", q:"Wie ordnen Sie die Wirtschaft der SBZ?", o:[
+    {t:"Zentrale Planwirtschaft ausbauen",d:"Die DWK plant zentral, ein Zweijahrplan für 1949/50 wird beschlossen, Großbetriebe werden Volkseigene Betriebe (VEB). Auf die D-Mark folgt am 23. Juni eine eigene Währung.",m:4,e:-10,hist:true,
+     lens:"Die Zone wird zur Kommandowirtschaft sowjetischen Typs.",
+     why:"So geschah es. Planwirtschaft galt als Überwindung der Ausbeutung; die Kontrolle der Produktionsmittel sicherte zugleich die Macht der SED."},
+    {t:"Marktelemente zulassen, Einheitswährung anstreben",d:"Private Betriebe bleiben, Preise werden teilweise freigegeben, eine gesamtdeutsche Währung bleibt Ziel.",m:-5,e:8,
+     lens:"Moskau hält die Tür zur Einheit offen.",
+     why:"Das widersprach der Ideologie und hätte die SED-Herrschaft geschwächt. Zudem waren die Enteignungen 1945/46 längst vollzogen."},
+    {t:"Westliche D-Mark in der SBZ übernehmen",d:"Sie verzichten auf eine eigene Währung.",m:-8,e:12,
+     lens:"Eine Sensation: Die SBZ schließt sich dem westlichen Wirtschaftsraum an.",
+     why:"Damit hätte die Bank deutscher Länder über das Geld der SBZ bestimmt. Für Moskau wäre das der Anschluss der Zone an das westliche System gewesen."}
+  ]},
+  hist:"Zwei Währungen, zwei Wirtschaftsordnungen: Soziale Marktwirtschaft im Westen, Planwirtschaft im Osten."
+},
+{
+  date:"Juni 1948–Mai 1949", place:"Berlin", title:"Die Berlin-Krise",
+  lage:"Die D-Mark wird auch in den Westsektoren Berlins eingeführt. West-Berlin liegt rund 160 km tief in der SBZ, über zwei Millionen Menschen sind auf Versorgung von außen angewiesen.",
+  quotes:[{t:"Wenn Berlin fällt, folgt Westdeutschland als Nächstes.",c:"General Clay, April 1948 (sinngemäß)",s:"w"}],
+  wirt:"Kohle, Mehl, Strom: Wie versorgt man eine Stadt, deren Zugänge gesperrt sind?",
+  ideo:"Berlin wird zum Symbol: für den Westen ein Vorposten der Freiheit, für Moskau ein Fremdkörper mitten in der eigenen Zone.",
+  prompt:"Beurteilen Sie, wer die Berlin-Krise gewann und was beide Seiten aus ihr lernten.",
+  w:{actor:"Präsident Truman / General Clay", q:"Was tun Sie, wenn Moskau Berlin unter Druck setzt?", o:[
+    {t:"Luftbrücke",d:"Sie versorgen West-Berlin aus der Luft, ohne einen Schuss abzugeben.",m:2,e:-2,hist:true,
+     lens:"Die Westmächte bleiben in Berlin, aber sie schießen nicht.",
+     why:"So geschah es bis zum 12. Mai 1949. Die Luftbrücke vermied den Krieg und machte die Westmächte in West-Berlin von Besatzern zu Beschützern."},
+    {t:"Panzerkonvoi über die Autobahn",d:"Ein bewaffneter Konvoi soll den Landweg nach Berlin öffnen.",m:12,e:-5,
+     lens:"Ein militärischer Angriff auf unsere Zone.",
+     why:"Clay schlug genau das vor. Truman lehnte ab: Das Risiko eines Krieges mit der Roten Armee war zu groß."},
+    {t:"Berlin räumen",d:"Die Westmächte ziehen sich aus Berlin zurück.",m:-4,e:-3,
+     lens:"Sieg: Ganz Berlin gehört zu unserer Zone.",
+     why:"Westeuropa hätte am Beistand der USA gezweifelt; genau das meinte Clay mit seinem Satz über Berlin und Westdeutschland."}
+  ]},
+  o:{actor:"Stalin / SMAD", q:"Wie reagieren Sie auf die D-Mark in West-Berlin?", o:[
+    {t:"Blockade aller Land- und Wasserwege",d:"Ab dem 24. Juni 1948 sind Straßen, Schienen und Kanäle nach West-Berlin gesperrt.",m:8,e:-3,hist:true,
+     lens:"Erpressung: Moskau will zwei Millionen Menschen aushungern, um den Weststaat zu verhindern.",
+     why:"So geschah es. Stalin wollte die Westmächte aus Berlin drängen oder die Gründung des Weststaats stoppen. Beides misslang."},
+    {t:"Ostmark in ganz Berlin, Zugänge bleiben offen",d:"Sie erklären die Ostwährung für ganz Berlin verbindlich und bieten Verhandlungen an.",m:2,e:0,
+     lens:"Moskau beansprucht ganz Berlin, aber ohne Gewalt.",
+     why:"Ohne Blockade hätte Moskau kein Druckmittel gegen die Londoner Beschlüsse zur Weststaatsgründung gehabt."},
+    {t:"Westmark in Berlin dulden",d:"Sie nehmen hin, dass in den Westsektoren mit D-Mark bezahlt wird.",m:-6,e:2,
+     lens:"Moskau akzeptiert den Status quo.",
+     why:"Damit hätte Moskau West-Berlin als Schaufenster des Westens mitten in der SBZ hingenommen und die Ostwährung gefährdet."}
+  ]},
+  hist:"Blockade und Luftbrücke: erster Höhepunkt des Kalten Krieges. Im April 1949 gründen die Westmächte die NATO."
+},
+{
+  date:"Mai–Oktober 1949", place:"Bonn · Ost-Berlin", title:"Zwei Staaten",
+  lage:"Auf Grundlage der Frankfurter Dokumente hat der Parlamentarische Rat das Grundgesetz ausgearbeitet. Im April 1949 ist die NATO gegründet worden. In der SBZ arbeitet die Volkskongressbewegung an einer Verfassung, die „für ganz Deutschland“ gelten soll.",
+  quotes:[{t:"Besser ein zerstückeltes Deutschland, von dem wenigstens der westliche Teil als Prellbock für die Kräfte des Totalitarismus wirkt, als ein geeintes Deutschland, das diese Kräfte wieder bis an die Nordsee vorlässt.",c:"George F. Kennan, Memoiren, über seine Haltung im Sommer 1945",s:"w"}],
+  wirt:"Zwei Staaten, zwei Wirtschaftsräume: Marshall-Plan hier, RGW (ab Januar 1949) dort.",
+  ideo:"Beide Staaten beanspruchen, das „eigentliche“ Deutschland zu sein.",
+  prompt:"Nehmen Sie Stellung: Waren die Staatsgründungen 1949 eher Ziel oder eher Folge der alliierten Politik?",
+  w:{actor:"Westmächte und Parlamentarischer Rat", q:"Wie geht es mit den Westzonen weiter?", o:[
+    {t:"Bundesrepublik gründen",d:"Das Grundgesetz tritt am 24. Mai 1949 in Kraft, ein Besatzungsstatut behält den Westmächten Rechte vor.",m:4,e:0,hist:true,
+     lens:"Spaltung Deutschlands durch die Westmächte: der Beweis für alles, was wir gesagt haben.",
+     why:"So geschah es. Westdeutschland sollte stabil, demokratisch und Teil des Westens werden. Präambel und Art. 146 GG hielten die Einheit offen."},
+    {t:"Weststaat zurückstellen, neue Vier-Mächte-Konferenz",d:"Sie warten auf eine Einigung über ganz Deutschland.",m:-4,e:4,
+     lens:"Der Westen zögert; noch ist nichts entschieden.",
+     why:"Die Pariser Außenministerkonferenz im Mai/Juni 1949 brachte keine Annäherung. Nach Blockade und gescheiterten Konferenzen sah Washington keine Grundlage mehr."},
+    {t:"Neutrales Gesamtdeutschland anbieten",d:"Ein vereintes, entmilitarisiertes, blockfreies Deutschland mit freien Wahlen.",m:-6,e:8,
+     lens:"Ein ernst zu nehmendes Angebot oder eine Falle?",
+     why:"Ein neutrales Deutschland hätte aus US-Sicht unter sowjetischen Einfluss geraten können (vgl. Kennans „Prellbock“)."}
+  ]},
+  o:{actor:"Stalin und SED-Führung", q:"Wie antworten Sie auf den Weststaat?", o:[
+    {t:"DDR gründen",d:"Am 7. Oktober 1949 wird die Deutsche Demokratische Republik ausgerufen, nach der Bundesrepublik.",m:4,e:0,hist:true,
+     lens:"Ein Satellitenstaat ohne freie Wahlen.",
+     why:"So geschah es. Die SED-Herrschaft war längst aufgebaut. Dass die DDR erst nach der Bundesrepublik gegründet wurde, erlaubte es, die Verantwortung für die Teilung dem Westen zuzuschreiben."},
+    {t:"SBZ ohne eigenen Staat lassen",d:"Sie setzen weiter auf Verhandlungen über ganz Deutschland.",m:-3,e:3,
+     lens:"Moskau lässt die Tür zur Einheit offen.",
+     why:"Die SED wäre ohne staatliche Legitimation geblieben, während im Westen ein Staat entstand."},
+    {t:"Gesamtdeutsche freie Wahlen anbieten",d:"Ein neutrales Deutschland soll in freien Wahlen entstehen.",m:-8,e:8,
+     lens:"Ein ernst zu nehmendes Angebot oder ein Manöver gegen die Westbindung?",
+     why:"Freie Wahlen hätten die SED-Herrschaft gefährdet. Ob Stalin so etwas je ernst meinte, ist bis heute umstritten (Stalin-Noten 1952)."}
+  ]},
+  hist:"Doppelte Staatsgründung 1949: Bundesrepublik im Mai, DDR im Oktober."
+}];
+
+const SORT = [
+  {t:"Preise bilden sich aus Angebot und Nachfrage.",a:"M"},
+  {t:"Eine zentrale Behörde (ab 1948 die DWK) legt fest, was produziert wird.",a:"P"},
+  {t:"Großbetriebe werden zu „Volkseigenen Betrieben“ (VEB).",a:"P"},
+  {t:"Eine von staatlichen Weisungen unabhängige Zentralbank sichert die Währung.",a:"M"},
+  {t:"Gewinnstreben gilt als Leistungsanreiz.",a:"M"},
+  {t:"Betriebe erhalten Kennziffern, die sie erfüllen müssen.",a:"P"},
+  {t:"Gewerkschaften und Arbeitgeber handeln Löhne ohne Staat aus (Tarifautonomie).",a:"M"},
+  {t:"Der Staat setzt die Preise aller Güter fest.",a:"P"}
+];
+
+const POS = [
+  {k:"T",n:"Traditionalistisch",d:"Die Sowjetunion hat durch ihre Expansion in Osteuropa und in ihrer Zone den Konflikt verursacht; der Westen hat darauf reagiert."},
+  {k:"R",n:"Revisionistisch",d:"Die USA haben mit wirtschaftlichem Expansionsdrang und Antikommunismus den Konflikt verursacht; die UdSSR hat ihre Sicherheit verteidigt."},
+  {k:"P",n:"Postrevisionistisch",d:"Beide Seiten haben sich gegenseitig falsch eingeschätzt; Sicherheitsinteressen und Ideologien schaukelten sich auf (Sicherheitsdilemma)."}
+];
+
+/* ---------- Zustand ---------- */
+const KEY="avk-spiel-v1";
+const fresh=()=>({mode:null,side:null,names:"",r:0,phase:"start",ch:ROUNDS.map(()=>({w:null,o:null})),notes:ROUNDS.map(()=>""),sort:{},pos:null,fin1:"",fin2:""});
+let S=fresh();
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s&&s.ch&&s.ch.length===ROUNDS.length) S=s;}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+const histIdx=(r,s)=>ROUNDS[r][s].o.findIndex(o=>o.hist);
+const clamp=v=>Math.max(0,Math.min(100,v));
+function path(useHist){
+  let m=25,e=100; const M=[m],E=[e];
+  ROUNDS.forEach((R,i)=>{
+    const c=S.ch[i];
+    const wi=useHist?histIdx(i,"w"):c.w, oi=useHist?histIdx(i,"o"):c.o;
+    if(wi==null||oi==null) return;
+    m=clamp(m+R.w.o[wi].m+R.o.o[oi].m); e=clamp(e+R.w.o[wi].e+R.o.o[oi].e);
+    M.push(m);E.push(e);
+  });
+  return {M,E};
+}
+
+/* ---------- Helfer ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const L="ABC";
+const sideName={w:"USA / Westen",o:"UdSSR / Osten"};
+
+function meters(){
+  const p=path(false), h=path(true);
+  const n=p.M.length-1;
+  const m=p.M[n], e=p.E[n];
+  $("#mv").textContent=m; $("#ev").textContent=e;
+  $("#mbar span").style.width=m+"%"; $("#ebar span").style.width=e+"%";
+  const show=n>0;
+  const hm=$("#mbar .h"), he=$("#ebar .h");
+  hm.hidden=he.hidden=!show;
+  if(show){hm.style.left=`calc(${h.M[n]}% - 1px)`;he.style.left=`calc(${h.E[n]}% - 1px)`;hm.title=he.title="Historischer Wert";}
+  const st=$("#steps"); st.innerHTML="";
+  ROUNDS.forEach((_,i)=>{const d=document.createElement("i"); if(i<S.r||S.phase==="end")d.className="done"; else if(i===S.r&&S.phase!=="start")d.className="now"; st.appendChild(d);});
+}
+
+function go(phase){S.phase=phase;save();render();window.scrollTo({top:0,behavior:"auto"});}
+
+/* ---------- Ansichten ---------- */
+function vStart(){
+  return `<div class="stack-l">
+  <section class="hero stack">
+    <p class="mono">Q2 LK Geschichte · EVA · Die doppelte Staatsgründung 1949</p>
+    <h1>Vom Verbündeten zum Gegner</h1>
+    <p class="lage">1945 haben die USA, Großbritannien und die Sowjetunion Hitler gemeinsam besiegt. Vier Jahre später gibt es zwei deutsche Staaten, zwei Wirtschaftsordnungen und zwei Blöcke. In sieben Runden treffen Sie die Entscheidungen, vor denen Washington und Moskau standen, und erleben, wie jede Entscheidung auf der anderen Seite ankam.</p>
+  </section>
+  <section class="auftrag">
+    <h3>Ihr Auftrag (45 Minuten)</h3>
+    <ol>
+      <li>Spielen Sie zu zweit an einem Tablet: eine Person führt die USA, die andere die UdSSR. Wählen Sie verdeckt, ohne auf den Bildschirm der anderen zu schauen.</li>
+      <li>Lesen Sie nach jeder Runde die Auflösung und notieren Sie Ihre Antwort auf die Logbuch-Frage (2–3 Sätze). Richtzeit: etwa 5 Minuten pro Runde.</li>
+      <li>Bearbeiten Sie am Ende die Abschlussaufgaben und kopieren Sie Ihr Logbuch in das Kursnotizbuch, Seite „23.11.26 (EVA)“.</li>
+      <li>Was in der Stunde nicht fertig wird, ist Hausaufgabe. Das Spiel merkt sich Ihren Stand auf diesem Gerät.</li>
+    </ol>
+  </section>
+  <section class="sheet stack">
+    <label class="q" for="names">Ihre Namen</label>
+    <input type="text" id="names" placeholder="z. B. Lena und Tarik" value="${esc(S.names)}">
+    <p class="mono" style="margin-top:8px">Spielmodus</p>
+    <div class="mode">
+      <button class="opt" id="m-pair"><span class="k">2</span><strong>Zu zweit</strong><small>USA gegen UdSSR. Beide wählen verdeckt, dann wird aufgedeckt.</small></button>
+      <button class="opt" id="m-w"><span class="k">1</span><strong>Allein als USA</strong><small>Moskau entscheidet so, wie es historisch geschah.</small></button>
+      <button class="opt" id="m-o"><span class="k">1</span><strong>Allein als UdSSR</strong><small>Washington entscheidet so, wie es historisch geschah.</small></button>
+      <div class="note" style="align-self:center">Die Leisten oben zeigen, wie Misstrauen und wirtschaftliche Einheit sich entwickeln. Der gelbe Strich markiert den historischen Wert.</div>
+    </div>
+  </section>
+  <details>
+    <summary>Hinweise für die Lehrkraft</summary>
+    <div class="stack">
+      <p>Das Spiel knüpft an die Stunden vom 02.11. bis 20.11. an (Kriegskonferenzen, Besatzungspolitik, Kurswechsel 1946/47, Truman/Shdanov, Währungsreform und Wirtschaftsordnungen, SED, Staatsgründungen) und führt am Ende auf die Leitfrage der Reihe zurück.</p>
+      <p>Jede Runde zeigt: die Lage mit Quelle, eine Wirtschafts- und eine Ideologiespur, drei Optionen je Seite, die Wahrnehmung durch die Gegenseite und einen Realitätscheck, warum die historischen Akteure so (oder nicht so) entschieden. Kontrafaktische Entscheidungen sind erlaubt; der Realitätscheck verhindert, dass „Frieden“ als bloßer Spielsieg erscheint.</p>
+      <p>Sicherung: Logbuch mit sieben Kurzantworten, eine Einordnung in historiografische Deutungen (traditionalistisch, revisionistisch, postrevisionistisch) und eine Überprüfung der These zum Zerfall der Anti-Hitler-Koalition. Das Logbuch wird als Text kopiert und in OneNote eingefügt.</p>
+      <p>Der Spielstand liegt nur im Browser des jeweiligen Tablets. Neustart über „Von vorn beginnen“ am Ende der Seite.</p>
+    </div>
+  </details>
+  </div>`;
+}
+
+function quoteHTML(q){return `<blockquote class="${q.s}"><p>„${esc(q.t)}“</p><cite>${esc(q.c)}</cite></blockquote>`;}
+
+function vBrief(){
+  const R=ROUNDS[S.r];
+  return `<div class="stack-l"><article class="sheet stack">
+    <div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span>${esc(R.place)}</span><span><b>${esc(R.date)}</b></span></div>
+    <h2>${esc(R.title)}</h2>
+    <p class="lage">${esc(R.lage)}</p>
+    ${R.quotes.map(quoteHTML).join("")}
+    <dl class="track"><dt>Wirtschaft</dt><dd>${esc(R.wirt)}</dd><dt>Ideologie</dt><dd>${esc(R.ideo)}</dd></dl>
+  </article>
+  ${R.sort?vSort():""}
+  <div class="row"><button class="btn" id="toChoose">Entscheidungen treffen</button></div></div>`;
+}
+
+function vSort(){
+  return `<section class="sheet stack" aria-labelledby="sorth">
+    <h3 id="sorth">Vorab: Markt oder Plan?</h3>
+    <p class="note">Ordnen Sie jedes Merkmal zu (vgl. M2 vom 13.11.). Erst danach entscheiden Sie.</p>
+    <div class="sort">${SORT.map((x,i)=>{
+      const v=S.sort[i]; const cls=v?(v===x.a?"right":"wrong"):"";
+      const fb=v?(v===x.a?`<span class="fb ok">Richtig: ${x.a==="M"?"Soziale Marktwirtschaft":"Planwirtschaft"}.</span>`:`<span class="fb">Nicht ganz: Das gehört zur ${x.a==="M"?"Sozialen Marktwirtschaft":"Planwirtschaft"}.</span>`):"";
+      return `<div class="si ${cls}"><span>${esc(x.t)}</span><span class="b"><button data-sort="${i}" data-v="M">Markt</button><button data-sort="${i}" data-v="P">Plan</button></span>${fb}</div>`;}).join("")}</div>
+  </section>`;
+}
+
+function vChoose(side){
+  const R=ROUNDS[S.r], D=R[side], cur=S.ch[S.r][side];
+  const pair=S.mode==="pair";
+  return `<div class="stack-l"><article class="sheet stack ${side}-side">
+    <div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span><b>${esc(R.date)}</b></span><span>${pair?"Verdeckte Wahl":"Ihre Wahl"}</span></div>
+    <div class="who"><span class="side ${side}">${sideName[side]}</span><span class="note">${esc(D.actor)}</span></div>
+    <h2>${esc(D.q)}</h2>
+    <div class="opts" role="radiogroup" aria-label="${esc(D.q)}">${D.o.map((o,i)=>`
+      <button class="opt ${cur===i?"sel":""}" role="radio" aria-checked="${cur===i}" data-pick="${i}"><span class="k">${L[i]}</span><strong>${esc(o.t)}</strong><small>${esc(o.d)}</small></button>`).join("")}</div>
+  </article>
+  <div class="row"><button class="btn ${side}" id="confirm" ${cur==null?"disabled":""}>Entscheidung festlegen</button><button class="link" id="backBrief">Zurück zur Lage</button></div></div>`;
+}
+
+function vHand(){
+  return `<div class="sheet handover">
+    <span class="side w">USA hat entschieden</span>
+    <h2>Tablet an die UdSSR übergeben</h2>
+    <p class="note">Die Wahl Washingtons bleibt verdeckt, bis beide entschieden haben.</p>
+    <button class="btn o" id="toO">Ich spiele die UdSSR, weiter</button>
+  </div>`;
+}
+
+function sideCard(side){
+  const R=ROUNDS[S.r], D=R[side], i=S.ch[S.r][side], o=D.o[i];
+  const other=side==="w"?"Moskau":"Washington";
+  const h=D.o.findIndex(x=>x.hist);
+  const yours=S.mode==="pair"||S.side===side;
+  return `<div class="card ${side}">
+    <div class="who"><span class="side ${side}">${sideName[side]}</span>${o.hist?`<span class="stamp h">historisch</span>`:`<span class="stamp n">alternativ</span>`}</div>
+    <h3>${L[i]}: ${esc(o.t)}</h3>
+    ${yours?"":`<p class="note">Diese Seite handelt wie historisch.</p>`}
+    <div class="lens"><span class="mono">So las ${other} das</span>„${esc(o.lens)}“</div>
+    <p class="check"><span class="mono">${o.hist?"Warum so":"Realitätscheck"}</span><br>${esc(o.why)}</p>
+    ${o.hist?"":`<div class="histbox"><span class="mono">Tatsächlich</span><br><strong>${esc(D.o[h].t)}.</strong> ${esc(D.o[h].why)}</div>`}
+    <p class="delta">Misstrauen ${o.m>=0?"+":""}${o.m} · Wirtschaftseinheit ${o.e>=0?"+":""}${o.e}</p>
+  </div>`;
+}
+
+function vReveal(){
+  const R=ROUNDS[S.r]; const last=S.r===ROUNDS.length-1;
+  return `<div class="stack-l">
+    <div class="stack"><div class="cable"><span>Runde <b>${S.r+1}/${ROUNDS.length}</b></span><span>Auflösung</span><span><b>${esc(R.date)}</b></span></div>
+    <h2>${esc(R.title)}</h2></div>
+    <div class="reveal">${sideCard("w")}${sideCard("o")}</div>
+    <div class="histbox"><span class="mono">Ergebnis der Geschichte</span><br>${esc(R.hist)}</div>
+    <section class="sheet stack">
+      <label class="q" for="note">Logbuch · ${esc(R.prompt)}</label>
+      <textarea id="note" placeholder="2–3 Sätze">${esc(S.notes[S.r])}</textarea>
+    </section>
+    <div class="row"><button class="btn" id="next">${last?"Zur Auswertung":"Nächste Runde"}</button></div>
+  </div>`;
+}
+
+function chart(){
+  const p=path(false), h=path(true);
+  const W=640,H=250,l=44,r=16,t=16,b=40, n=ROUNDS.length;
+  const x=i=>l+i*(W-l-r)/n, y=v=>t+(100-v)*(H-t-b)/100;
+  const line=(arr,col,dash)=>`<polyline fill="none" stroke="${col}" stroke-width="3" ${dash?'stroke-dasharray="6 5"':""} stroke-linejoin="round" points="${arr.map((v,i)=>x(i)+","+y(v)).join(" ")}"/>`+arr.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${col}"/>`).join("");
+  let g="";
+  [0,25,50,75,100].forEach(v=>{g+=`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${l-8}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--f-mono)">${v}</text>`;});
+  const lab=["Start","1945","45/46","1946","1947","1948","48/49","1949"];
+  lab.forEach((s,i)=>{g+=`<text x="${x(i)}" y="${H-14}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--f-mono)">${s}</text>`;});
+  return `<div class="chartbox"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Verlauf des Misstrauens: Ihr Spiel im Vergleich zum historischen Verlauf">${g}${line(h.M,"var(--hist)",true)}${line(p.M,"var(--ost)")}</svg></div>
+  <div class="legend"><span style="--c:var(--ost)">Ihr Verlauf (Misstrauen)</span><span style="--c:var(--hist)">historischer Verlauf</span></div>`;
+}
+
+function verdict(){
+  const p=path(false); const m=p.M[p.M.length-1], e=p.E[p.E.length-1];
+  let alt=0; ROUNDS.forEach((R,i)=>["w","o"].forEach(s=>{const c=S.ch[i][s]; if(c!=null&&!R[s].o[c].hist)alt++;}));
+  let t;
+  if(m>=85) t="Ihr Verlauf entspricht weitgehend dem historischen: Aus Verbündeten sind Gegner geworden. Zwei Staaten, zwei Wirtschaftsordnungen, zwei Blöcke.";
+  else if(m>=60) t="Die Spannungen sind hoch, aber nicht ganz so festgefahren wie 1949. Prüfen Sie, an welchen Stellen Sie anders als die Akteure entschieden haben, und ob deren Realitätscheck Sie überzeugt.";
+  else t="In Ihrem Verlauf bleibt die Koalition handlungsfähig. Prüfen Sie kritisch: Hätten die realen Akteure so handeln können? Die Realitätschecks nennen Ideologie, Sicherheitsinteressen und Innenpolitik als Gründe dagegen.";
+  return {m,e,alt,t};
+}
+
+function vEnd(){
+  const v=verdict();
+  return `<div class="stack-l">
+  <section class="stack"><p class="mono">Auswertung</p><h2>Wie aus Verbündeten Gegner wurden</h2>
+    <p class="lage">Misstrauen am Ende: <b>${v.m}</b> von 100 · Wirtschaftseinheit: <b>${v.e}</b> von 100 · alternative Entscheidungen: <b>${v.alt}</b></p>
+    <p class="lage">${esc(v.t)}</p></section>
+  <section class="sheet stack">${chart()}</section>
+  <section class="sheet stack">
+    <h3>Aufgabe 1 · Deutungen des Kalten Krieges</h3>
+    <p class="note">Welcher Deutung kommt Ihr Spielerlebnis am nächsten? Wählen Sie eine und begründen Sie mit zwei Runden.</p>
+    <div class="pos">${POS.map(p=>`<button data-pos="${p.k}" class="${S.pos===p.k?"sel":""}" aria-pressed="${S.pos===p.k}"><b>${p.n}</b><span>${esc(p.d)}</span></button>`).join("")}</div>
+    <label class="q" for="fin1">Begründung</label>
+    <textarea id="fin1">${esc(S.fin1)}</textarea>
+  </section>
+  <section class="sheet stack">
+    <h3>Aufgabe 2 · Zurück zur Leitfrage</h3>
+    <blockquote><p>„Zweifelsfrei ist die Entstehung beider deutscher Staaten […] mehr noch aus dem Zerfall der Anti-Hitler-Koalition […] zu erklären.“</p></blockquote>
+    <p class="note">Überprüfen Sie diese These aus der ersten Stunde mithilfe Ihres Spielverlaufs: Nennen Sie zwei Runden, die die These stützen, und eine Runde, die eher dafür spricht, dass eine Seite die Teilung gezielt ansteuerte. Formulieren Sie ein abschließendes Urteil.</p>
+    <label class="q" for="fin2">Ihr Urteil</label>
+    <textarea id="fin2" style="min-height:160px">${esc(S.fin2)}</textarea>
+  </section>
+  <section class="sheet stack">
+    <h3>Logbuch sichern</h3>
+    <p class="note">Kopieren Sie das Logbuch und fügen Sie es im Kursnotizbuch auf der Seite „23.11.26 (EVA)“ ein.</p>
+    <div class="row"><button class="btn" id="copy">Logbuch kopieren</button><span id="copied" class="note" role="status"></span></div>
+    <textarea id="logtxt" readonly hidden style="min-height:220px"></textarea>
+    <div class="tbl">${logTable()}</div>
+  </section>
+  </div>`;
+}
+
+function logTable(){
+  return `<table class="log"><thead><tr><th>Runde</th><th>USA</th><th>UdSSR</th><th>Notiz</th></tr></thead><tbody>${ROUNDS.map((R,i)=>{
+    const c=S.ch[i]; const f=(s)=>c[s]==null?"–":`${L[c[s]]}${R[s].o[c[s]].hist?" ✓":""}`;
+    return `<tr><td>${i+1}. ${esc(R.title)}</td><td>${f("w")}</td><td>${f("o")}</td><td>${esc(S.notes[i]||"–")}</td></tr>`;}).join("")}</tbody></table><p class="note">✓ = historische Entscheidung</p>`;
+}
+
+function logText(){
+  const v=verdict(); const pos=POS.find(p=>p.k===S.pos);
+  let s=`Logbuch · Vom Verbündeten zum Gegner\n${S.names||"(ohne Namen)"} · Modus: ${S.mode==="pair"?"zu zweit":"allein als "+sideName[S.side]}\n\n`;
+  ROUNDS.forEach((R,i)=>{const c=S.ch[i];
+    s+=`Runde ${i+1}: ${R.title} (${R.date})\n`;
+    ["w","o"].forEach(k=>{if(c[k]!=null){const o=R[k].o[c[k]]; s+=`  ${sideName[k]}: ${L[c[k]]} ${o.t}${o.hist?" (historisch)":" (alternativ)"}\n`;}});
+    s+=`  Frage: ${R.prompt}\n  Antwort: ${S.notes[i]||"–"}\n\n`;});
+  s+=`Endstand: Misstrauen ${v.m}/100, Wirtschaftseinheit ${v.e}/100, alternative Entscheidungen: ${v.alt}\n\n`;
+  s+=`Aufgabe 1 (Deutung): ${pos?pos.n:"–"}\n${S.fin1||"–"}\n\nAufgabe 2 (Urteil zur These):\n${S.fin2||"–"}\n`;
+  return s;
+}
+
+function render(){
+  const app=$("#app"); let h="";
+  const ph=S.phase;
+  if(ph==="start") h=vStart();
+  else if(ph==="brief") h=vBrief();
+  else if(ph==="w"||ph==="o") h=vChoose(ph);
+  else if(ph==="hand") h=vHand();
+  else if(ph==="reveal") h=vReveal();
+  else if(ph==="end") h=vEnd();
+  if(ph!=="start") h+=`<div class="row" style="margin-top:36px;justify-content:space-between"><span class="note">${esc(S.names)}</span><button class="link" id="reset">Von vorn beginnen</button></div>`;
+  app.innerHTML=h; meters(); bind();
+}
+
+let resetArmed=false;
+function bind(){
+  const on=(sel,fn)=>{const el=$(sel); if(el) el.addEventListener("click",fn);};
+  const names=$("#names"); if(names) names.addEventListener("input",e=>{S.names=e.target.value;save();});
+  const start=(mode,side)=>{S.mode=mode;S.side=side;S.r=0;go("brief");};
+  on("#m-pair",()=>start("pair",null)); on("#m-w",()=>start("solo","w")); on("#m-o",()=>start("solo","o"));
+  on("#toChoose",()=>go(S.mode==="pair"?"w":S.side));
+  on("#backBrief",()=>go("brief"));
+  document.querySelectorAll("[data-pick]").forEach(b=>b.addEventListener("click",()=>{S.ch[S.r][S.phase]=+b.dataset.pick;save();render();}));
+  document.querySelectorAll("[data-sort]").forEach(b=>b.addEventListener("click",()=>{S.sort[b.dataset.sort]=b.dataset.v;save();const y=window.scrollY;render();window.scrollTo(0,y);}));
+  on("#confirm",()=>{
+    const side=S.phase;
+    if(S.mode==="pair"){ if(side==="w") go("hand"); else go("reveal"); }
+    else { const other=side==="w"?"o":"w"; S.ch[S.r][other]=histIdx(S.r,other); go("reveal"); }
+  });
+  on("#toO",()=>go("o"));
+  const note=$("#note"); if(note) note.addEventListener("input",e=>{S.notes[S.r]=e.target.value;save();});
+  on("#next",()=>{ if(S.r<ROUNDS.length-1){S.r++;go("brief");} else go("end"); });
+  document.querySelectorAll("[data-pos]").forEach(b=>b.addEventListener("click",()=>{S.pos=b.dataset.pos;save();document.querySelectorAll("[data-pos]").forEach(x=>{const s=x.dataset.pos===S.pos;x.classList.toggle("sel",s);x.setAttribute("aria-pressed",s);});}));
+  ["fin1","fin2"].forEach(id=>{const el=$("#"+id); if(el) el.addEventListener("input",e=>{S[id]=e.target.value;save();});});
+  on("#copy",()=>{
+    const txt=logText(), ta=$("#logtxt"), msg=$("#copied");
+    const fallback=()=>{ta.hidden=false;ta.value=txt;ta.focus();ta.select();msg.textContent="Text ist markiert. Bitte mit „Kopieren“ übernehmen.";};
+    try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent="Kopiert. Jetzt in OneNote einfügen.";},fallback);}catch(e){fallback();}
+  });
+  on("#reset",e=>{
+    if(!resetArmed){resetArmed=true;e.target.textContent="Wirklich alles löschen? Nochmal tippen";setTimeout(()=>{resetArmed=false;const r=$("#reset"); if(r) r.textContent="Von vorn beginnen";},4000);return;}
+    resetArmed=false; S=fresh(); save(); go("start");
+  });
+}
+
+render();
+</script>
+</body>
+</html>
